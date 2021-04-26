@@ -1,5 +1,7 @@
 package com.bill.servlet;
 
+import com.alibaba.fastjson.JSONObject;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,6 +32,12 @@ public class HelloServlet extends HttpServlet {
 //        super.doPost(req, resp);
         PrintWriter writer = resp.getWriter();
         writer.write("<h1>" + message + "</h1>");
+
+        JSONObject obj = new JSONObject();
+        obj.put("id", "123");
+        obj.put("name", "Bill");
+        // 返回json数据，会将上面 write 输出内容覆盖
+        writer.write(obj.toJSONString());
 
     }
 }
