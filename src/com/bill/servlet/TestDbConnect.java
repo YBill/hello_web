@@ -1,25 +1,62 @@
 package com.bill.servlet;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import javax.sql.DataSource;
 import java.sql.*;
 
 public class TestDbConnect {
 
     public static void main(String[] args) {
-        Connection conn = null;
+        try {
+            hikariCPConnect();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    private static void hikariCPConnect() throws SQLException {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:mysql://localhost:3306/first_test");
+        config.setUsername("root");
+        config.setPassword("123456");
+        config.addDataSourceProperty("connectionTimeout", "1000"); // 连接超时：1秒
+        config.addDataSourceProperty("idleTimeout", "60000"); // 空闲超时：60秒
+        config.addDataSourceProperty("maximumPoolSize", "10"); // 最大连接数：10
+        DataSource ds = new HikariDataSource(config);
+
+        System.out.println("连接数据库...");
+
+        Connection conn = ds.getConnection();
+
+        select(conn);
+    }
+
+    private static void jdbcConnect() throws SQLException {
+        // 注册 JDBC 驱动
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("连接数据库...");
+
+        // 连接
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/first_test",
+                "root", "123456");
+
+        select(conn);
+    }
+
+    private static void select(Connection conn) {
         Statement stmt = null;
         ResultSet rs = null;
 
         try {
-            // 注册 JDBC 驱动
-            Class.forName("com.mysql.jdbc.Driver");
-
-            System.out.println("连接数据库...");
-
-            // 连接
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/first_test",
-                    "root", "123456");
-
             System.out.println(" 实例化Statement对象...");
+
             stmt = conn.createStatement();
 
             // 查询数据
@@ -34,7 +71,7 @@ public class TestDbConnect {
                 System.out.println();
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
@@ -49,7 +86,6 @@ public class TestDbConnect {
             }
 
         }
-
     }
 
 }
