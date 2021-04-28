@@ -18,6 +18,8 @@ public class TestDbConnect {
 
     private static void hikariCPConnect() throws SQLException {
         HikariConfig config = new HikariConfig();
+        // 直接在这里使用，不写这句话也正常，但是通过Servlet访问就会报错
+        config.setDriverClassName("com.mysql.jdbc.Driver");
         config.setJdbcUrl("jdbc:mysql://localhost:3306/first_test");
         config.setUsername("root");
         config.setPassword("123456");
